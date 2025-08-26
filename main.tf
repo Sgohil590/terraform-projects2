@@ -100,4 +100,21 @@ module "asg" {
   target_group_arns   = [module.alb.target_group_arn]
 }
 
+module "rds" {
+  source           = "./modules/rds"
+  engine           = "mysql"
+  engine_version   = "8.0.36"
+  instance_class   = "db.t3.micro"
+  username         = "sahil"
+  password         = "sahil@123"
+
+
+#intergrate_sith_my_existing_vpc 
+
+vpc_security_group_ids  = [aws_security_group.asg_sg.id] 
+subnet_ids              = [module.vpc.private_subnet_id] 
+  db_identifier          = "demo-db"
+  db_subnet_group_name   = "rds-subnet-group"  # can match the subnet group resource name in the module
+} 
+
 
