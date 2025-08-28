@@ -2,6 +2,15 @@
 provider "aws" {
  region = var.region 
 }
+terraform {
+  backend "s3" {
+    bucket          = "sahil-terraform-state-bucket"
+    key             = "root/terraform.tfstate"
+    region          =  "ap-south-1"
+    dynamodb_table  = "sahil-terraform-locks"
+    encrypt          = true
+}
+}
 
 module "vpc" {
  source              = "./modules/vpc" 
@@ -48,7 +57,7 @@ module "alb" {
  public_subnet_ids     = [module.vpc.public_subnet_id]
  alb_security_group_id = aws_security_group.alb_sg.id 
  target_instance_ids  = [module.ec2.instance_id]
- environment           = "dev"
+
  tags = { 
    project = "TerraformDemo" 
 } 
